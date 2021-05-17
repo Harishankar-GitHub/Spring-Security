@@ -18,14 +18,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     {
         http
                 .authorizeRequests()
+                .antMatchers("/", "index", "/css/*", "/js/*")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .httpBasic();
 
-        // We are saying, we want to authorize requests, any request,
+        // We are saying, we want to authorize requests,
+        // any request,
         // must be authenticated (i.e., the client must specify the username and password)
-        // and the mechanism that we want to enforce the authenticity of the client
-        // is by using Http Basic Authentication.
+        // and
+        // the mechanism that we want to enforce the authenticity of the client is by using Http Basic Authentication.
+
+        // Permit all the requests from the URLs that are specified in antMatchers.
+        // i.e., Basic Authentication is not required.
     }
 }
