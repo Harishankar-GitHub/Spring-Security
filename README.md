@@ -31,5 +31,51 @@
 		- Username
 		- Password (*Must be encoded*)
 		- Role/s (*ROLE_NAME*)
-		- Authorities
+		- Authorities / Permissions
 		- and more...
+
+- **Roles and Permissions**
+
+	- For all the users of the application, we define a *Role*.
+	- The Role is just a high level view.
+	- *Authorities / Permissions* are given to the Roles.
+	- *Multiple Roles* can be assigned to a User.
+	- Defined ***Roles and Permissions*** inside Security Package.
+	- Then, added these Roles to the Users.
+	- This is known as ***Role Based Authentication***.
+
+- **Disabling CSRF**
+
+	- Created *Management API*.
+	- Added a *User* with *ADMINTRAINEE* Role.
+	- Now, when we hit any of the Management APIs, only *GET APIs* work.
+	- *PUT, POST, DELETE and other APIs* aren't working.
+	- This is because ***Spring Security by default protects*** the application.
+
+- **Permission Based Authentication**
+
+	- We have *Permissions* in Security Package.
+	- *Permissions* are given to the *Roles*.
+	- *Roles* are assigned to the *Users*.
+	- Permission Based Authentication can be implemented in ***2 ways***
+		- Using ***antMatchers()***
+		- Using ***Annotations***
+
+- **Using antMatchers() - By adding Authorities to Users**
+	
+	- Wrote a method ***getGrantedAuthorities()*** in *UserRoles*.
+	- This is to specify the *Authorities* to the *Roles*.
+	- In the SecurityConfig, instead of `.roles(ADMIN.name())` we can use `.authorities(ADMIN.getGrantedAuthorities())`
+	- By doing this, ***along with the Roles, the Permissions are also defined*** to the User.
+	- After this, the ***antMatchers()*** are added with the ***URLs and the Permissions***.
+	- Now the Management APIs are accessible ***according to the Permissions***.
+	- This is known as ***Permission Based Authentication***.
+
+> ***The ORDER of antMatchers() DOES MATTER*** 
+
+- **Using Annotations - @PreAuthorize**
+	- @PreAuthorize takes a String.
+		- `hasRole('ROLE_')`
+		- `hasAnyRole('ROLE_')`
+		- `hasAuthority('permission')`
+		- `hasAnyAuthority('permission')`
