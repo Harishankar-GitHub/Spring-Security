@@ -1,8 +1,10 @@
 package com.springsecurity.student;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class Student
 {
     private final Integer studentId;

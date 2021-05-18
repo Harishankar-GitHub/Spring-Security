@@ -33,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     protected void configure(HttpSecurity http) throws Exception
     {
         http
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*")
                 .permitAll()
@@ -41,6 +42,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .authenticated()
                 .and()
                 .httpBasic();
+
+        // By default, Spring Security protects the application. Only GET APIs are accessible.
+        // To access POST, PUT, DELETE etc, we disable CSRF.
 
         // We are saying, we want to authorize requests,
         // any request,
