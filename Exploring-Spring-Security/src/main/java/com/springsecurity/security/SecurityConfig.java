@@ -11,8 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import static com.springsecurity.security.UserRoles.ADMIN;
-import static com.springsecurity.security.UserRoles.STUDENT;
+import static com.springsecurity.security.UserRoles.*;
 
 @Configuration
 @EnableWebSecurity
@@ -72,12 +71,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .roles(ADMIN.name())   // This internally will be ROLE_ADMIN
                 .build();
 
+        UserDetails tom = User.builder()
+                .username("Tom")
+                .password(passwordEncoder.encode("password"))
+                .roles(ADMINTRAINEE.name())   // This internally will be ROLE_ADMINTRAINEE
+                .build();
+
         // This method is used to retrieve User Details from a Database.
         // For now, I have configured Users here.
 
         // Do a Ctrl+Click on UserDetailsService and inside that check which classes
         // implements this Interface. There are around 5-6 options such as InMemoryUserDetailsManager etc.
         // I have used InMemoryUserDetailsManager.
-        return new InMemoryUserDetailsManager(jack, jill);
+        return new InMemoryUserDetailsManager(jack, jill, tom);
     }
 }
