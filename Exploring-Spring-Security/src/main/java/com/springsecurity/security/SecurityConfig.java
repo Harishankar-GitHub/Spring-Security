@@ -3,7 +3,7 @@ package com.springsecurity.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -12,13 +12,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import static com.springsecurity.security.UserPermissions.COURSE_WRITE;
 import static com.springsecurity.security.UserRoles.*;
 
 @Configuration
 @EnableWebSecurity
 // The @EnableWebSecurity is a marker annotation.
 // It allows Spring to find and automatically apply the class to the global WebSecurity.
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+// prePostEnabled is false by default.
+// @EnableGlobalMethodSecurity Annotation is used to tell the Configuration that
+// we want to use Annotations for Role and Permission Based Authentication.
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
     private final PasswordEncoder passwordEncoder;
@@ -40,10 +43,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/", "index", "/css/*", "/js/*")
                 .permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())  // "/api/**" works. "/api/*" doesn't work.
-                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
-                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
-                .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
-                .antMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
+//                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+//                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+//                .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+//                .antMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
+//                The above 4 antMatchers are Permission Based Authentication using antMatchers.
+//                Commented the above antMatchers as we have used Permission Based Authentication
+//                using @PreAuthorize Annotation in StudentManagementController.
+
                 .anyRequest()
                 .authenticated()
                 .and()
