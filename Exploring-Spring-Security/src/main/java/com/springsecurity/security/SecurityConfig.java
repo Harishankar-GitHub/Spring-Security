@@ -60,13 +60,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .roles("STUDENT")   // This internally will be ROLE_STUDENT
                 .build();
 
+        // Defining Admin User
+        UserDetails jill = User.builder()
+                .username("Jill")
+                .password(passwordEncoder.encode("password"))
+                .roles("ADMIN")   // This internally will be ROLE_ADMIN
+                .build();
+
         // This method is used to retrieve User Details from a Database.
-        // For now, I have configured a User here.
+        // For now, I have configured Users here.
 
         // Do a Ctrl+Click on UserDetailsService and inside that check which classes
         // implements this Interface. There are around 5-6 options such as InMemoryUserDetailsManager etc.
         // I have used InMemoryUserDetailsManager.
-
-        return new InMemoryUserDetailsManager(jack);
+        return new InMemoryUserDetailsManager(jack, jill);
     }
 }
