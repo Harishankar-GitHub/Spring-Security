@@ -40,9 +40,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/", "index", "/css/*", "/js/*")
                 .permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())  // "/api/**" works. "/api/*" doesn't work.
-                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.name())
-                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.name())
-                .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.name())
+                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+                .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
                 .antMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
                 .anyRequest()
                 .authenticated()
@@ -77,20 +77,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         UserDetails jack = User.builder()
                 .username("Jack")
                 .password(passwordEncoder.encode("password"))
-                .roles(STUDENT.name())   // This internally will be ROLE_STUDENT
+//                .roles(STUDENT.name())   // This internally will be ROLE_STUDENT
+                // Commented the above line to specify the Roles along with the Authorities to the Users like below.
+                .authorities(STUDENT.getGrantedAuthorities())
                 .build();
 
         // Defining Admin User
         UserDetails jill = User.builder()
                 .username("Jill")
                 .password(passwordEncoder.encode("password"))
-                .roles(ADMIN.name())   // This internally will be ROLE_ADMIN
+//                .roles(ADMIN.name())   // This internally will be ROLE_ADMIN
+                // Commented the above line to specify the Roles along with the Authorities to the Users like below.
+                .authorities(ADMIN.getGrantedAuthorities())
                 .build();
 
         UserDetails tom = User.builder()
                 .username("Tom")
                 .password(passwordEncoder.encode("password"))
-                .roles(ADMINTRAINEE.name())   // This internally will be ROLE_ADMINTRAINEE
+//                .roles(ADMINTRAINEE.name())   // This internally will be ROLE_ADMINTRAINEE
+                // Commented the above line to specify the Roles along with the Authorities to the Users like below.
+                .authorities(ADMINTRAINEE.getGrantedAuthorities())
                 .build();
 
         // This method is used to retrieve User Details from a Database.
