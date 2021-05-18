@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import static com.springsecurity.security.UserRoles.ADMIN;
+import static com.springsecurity.security.UserRoles.STUDENT;
 
 @Configuration
 @EnableWebSecurity
@@ -35,6 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*")
                 .permitAll()
+                .antMatchers("/api/**").hasRole(STUDENT.name())  // "/api/**" works. "/api/*" doesn't work.
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -48,6 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 
         // Permit all the requests from the URLs that are specified in antMatchers.
         // i.e., Basic Authentication is not required.
+
+        // Permit URLs with /api/** only for the users which has STUDENT Role.
     }
 
     @Override
@@ -57,14 +62,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         UserDetails jack = User.builder()
                 .username("Jack")
                 .password(passwordEncoder.encode("password"))
-                .roles("STUDENT")   // This internally will be ROLE_STUDENT
+                .roles(STUDENT.name())   // This internally will be ROLE_STUDENT
                 .build();
 
         // Defining Admin User
         UserDetails jill = User.builder()
                 .username("Jill")
                 .password(passwordEncoder.encode("password"))
-                .roles("ADMIN")   // This internally will be ROLE_ADMIN
+                .roles(ADMIN.name())   // This internally will be ROLE_ADMIN
                 .build();
 
         // This method is used to retrieve User Details from a Database.
