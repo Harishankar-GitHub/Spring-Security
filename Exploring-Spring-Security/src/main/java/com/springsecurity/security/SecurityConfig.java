@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import static com.springsecurity.security.UserRoles.*;
 
 @Configuration
@@ -39,11 +38,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     protected void configure(HttpSecurity http) throws Exception
     {
         http
-//                .csrf().disable()
-//                The above line is commented so that CSRF is enabled and we can generate CSRF Token in below line.
+                .csrf().disable()
+//                The above line can be commented so that CSRF is enabled and we can generate CSRF Token in below line.
 
-                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()
+//                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                .and()
 //                The above line is to generate the CSRF Token.
 //                Spring Security by default should generate token without the above line. But it didn't.
 //                By adding the above line, the CSRF Token is generated and some configuration related to CSRF can also be done.
