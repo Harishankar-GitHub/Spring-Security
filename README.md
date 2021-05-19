@@ -79,3 +79,25 @@
 		- `hasAnyRole('ROLE_')`
 		- `hasAuthority('permission')`
 		- `hasAnyAuthority('permission')`
+
+- **Understanding CSRF - *Cross Site Request Forgery***
+	
+	> ***When to use CSRF Protection ?***
+	-	It is ***recommended*** to use CSRF protection for any request that could be ***processed by a browser*** by normal users. If you are only creating a ***service*** that is used by ***non-browser clients***, you will likely want to ***disable CSRF*** protection.
+	-	Hence ***CSRF is disabled*** in the code as it is a ***Service***.
+
+- **CSRF Token**
+	- To ***generate*** the CSRF Token, we comment / delete the `csrf().disable()` so that the ***CSRF is enabled*** now.
+	- Run the application.
+	- In ***Postman*** (From the icon next to the *Settings*), install ***Interceptor Bridge***.
+	- After this, from the same page, click a link to install ***Postman Interceptor***.
+	- This will redirect to the browser and prompt to install the ***Postman Interceptor Extension*** to the browser.
+	- Now, back to the Interceptor Bridge in Postman, we can see ***INTERCEPTOR CONNECTED***.
+	- Now the Postman Interceptor installation is ***successful***.
+
+- **Generating CSRF Token and Hitting the APIs with CSRF Enabled**
+	- Refer ***SecurityConfig.java*** for all the ***explanation!!***
+	- Some useful links about ***CSRF Token***
+		- [CookieCsrfTokenRepository.withHttpOnlyFalse()](https://stackoverflow.com/questions/62648098/what-does-cookie-csrftokenrepository-withhttponlyfalse-do-and-when-to-use-it)
+		- [CookieCsrfTokenRepository](https://docs.spring.io/spring-security/site/docs/4.2.15.RELEASE/apidocs/org/springframework/security/web/csrf/CookieCsrfTokenRepository.html)
+		- [Protection Against Exploits](https://docs.spring.io/spring-security/site/docs/5.2.x/reference/html/protection-against-exploits.html)
