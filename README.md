@@ -8,6 +8,11 @@
 	- The default ***password*** is ***generated*** in the application console during the startup of the application.
 	- [Logout](http://localhost:8080/logout) page is available as well.
 	- This is known as **Form Based Authentication**.
+- **Basic Authentication**
+	- Authorization: **Base64** Username and Password
+	- **HTTPS** Recommended
+	- **Simple** and **Fast**
+	- **Can't Logout**
 - Implemented **Basic Authentication**
 	- Added the configuration in *SecurityConfig.java* file.
 	- After this, when the application starts, instead of Form Based Authentication, a pop up window appears and it prompts to enter the Username and Password.
@@ -18,6 +23,8 @@
 		- In *Authorization Tab*, select *Basic Auth* and enter the Username and Password.
 		- The Password is *Base64 encoded*.
 		- Hit the API!
+	+ Some useful links
+		- [Baeldung - Basic Authentication](https://www.baeldung.com/spring-security-basic-authentication)
 - Implemented **Ant Matchers**
 	- Added *index.html* with a h1 tag in src/main/resources/static.
 	- Before adding this, when we try to hit the API after giving Username and Password at 8080 instead of 8080/abc, we get White label error page as there's no endpoint at 8080. But now, the *index.html* is displayed at http://localhost:8080/.
@@ -101,3 +108,64 @@
 		- [CookieCsrfTokenRepository.withHttpOnlyFalse()](https://stackoverflow.com/questions/62648098/what-does-cookie-csrftokenrepository-withhttponlyfalse-do-and-when-to-use-it)
 		- [CookieCsrfTokenRepository](https://docs.spring.io/spring-security/site/docs/4.2.15.RELEASE/apidocs/org/springframework/security/web/csrf/CookieCsrfTokenRepository.html)
 		- [Protection Against Exploits](https://docs.spring.io/spring-security/site/docs/5.2.x/reference/html/protection-against-exploits.html)
+
+- **Form Based Authentication**
+	- ***Username*** and ***Password***
+	- ***Standard*** in most websites
+	- ***Forms*** (Full Control)
+	- ***Can Logout***
+	- ***HTTPS*** Recommended
+
+	+ Some useful links ***Form Based Authentication***
+		- [Baeldung](https://www.baeldung.com/spring-security-login) 
+		- [Javatpoint](https://www.javatpoint.com/spring-security-form-based-authentication)
+		- [docs.spring.io](https://docs.spring.io/spring-security/site/docs/4.2.20.RELEASE/guides/html5/form-javaconfig.html)
+		- [Howtodoinjava](https://howtodoinjava.com/spring-security/login-form-based-spring-3-security-example/)
+		- [Codejava.net](https://www.codejava.net/frameworks/spring-boot/form-authentication-with-jdbc-and-mysql)
+		- [Dzone.com](https://dzone.com/articles/spring-security-form-based-authentication)
+	
+	+ ***How it works ?***
+		- ***Client*** sends ***POST*** Request with ***Username*** and ***Password*** to the ***Server***.
+		- Server ***validates*** and sends ***OK***.
+		- Also, the Server ***sends*** a ***Cookie SESSIONID*** to the ***Client***.
+		- The ***next time***, the Client sends the ***Request along with SESSIONID*** to the ***Server***.
+		- Server ***validates SESSIONID*** and sends ***Success Response***.
+
+- **Enable Form Based Authentication**
+	- Enabled by `http.formLogin()` in SecurityConfig.java
+	- Now, we get the ***Login page*** which we get initially when the ***Spring Security Dependency*** was added to the application.
+	- As mentioned in the above (How it works ?) section, we ***enter*** the Username and Password in the Login page.
+	- The ***Spring Security validates*** the credentials and sends ***OK***.
+	- Also, it ***sends a Cookie SESSIONID***.
+	- To ***view*** that, on the ***Login page***, *Right Click -> Inspect -> Go to **Application** -> **Cookies** -> Select the URL which we hit -> Cookie Name - **JSESSIONID**, Session ID Value will be in the **Value***.
+	- The Cookie SESSIONID is ***valid*** for ***30 Minutes***.
+
+	+ ***Cookie SESSIONID***
+		- The ***Session ID*** is stored in an ***In-Memory Database***.
+		- But in ***real world***, the best practice is to store the Sessions in a ***Real Database*** such as
+			- *PostgreSQL*
+			- *Redis etc.*
+ 
+	+ ***Some Useful Links***
+		- [Basic Auth and Form Based Auth in same REST API](https://stackoverflow.com/questions/33739359/combining-basic-authentication-and-form-login-for-the-same-rest-api)
+		- [Basic Auth and Form Based Auth with Spring Security](https://stackoverflow.com/questions/18729752/basic-and-form-based-authentication-with-spring-security-javaconfig)
+		- [Form Based Authentication](https://www.javatpoint.com/spring-security-form-based-authentication)
+
+- ***Custom Login Page***
+	- A Custom Login page can be created and ***can be replaced with the existing default Login page***.
+	- Refer ***SecurityConfig.java*** for the ***code***.
+	- Also, I have added ***Thymeleaf Dependency*** from Spring Boot.
+	- Thymeleaf is a ***Templating Engine*** which allows to do many things in regards to ***Html Files***.
+	- After adding the dependency, in src/main/resources, create a folder - ***templates***.
+	- Inside templates, create a file - ***login.html***
+	- And added a ***Controller*** to view Custom Login Page.
+	- In login.html, the ***code*** for Custom Login Page ***is taken from the Default Login Page***.
+		> *In the Default Login Page -> Inspect -> Elements -> Right Click on 1st Html Tag and Copy -> Copy Element and paste it in login.html file*.
+	- Now, when we hit the ***Login Page Controller***, we get the Login Page from ***login.html file***.
+	
+	+ ***Some useful Links for Thymeleaf***
+		- [Thymeleaf](https://www.thymeleaf.org/)
+		- [Baeldung](https://www.baeldung.com/spring-boot-crud-thymeleaf)
+		- [TutorialsPoint](https://www.tutorialspoint.com/spring_boot/spring_boot_thymeleaf.htm)
+		- [Javatpoint](https://www.javatpoint.com/spring-boot-thymeleaf-view)
+		
