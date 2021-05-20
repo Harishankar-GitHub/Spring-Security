@@ -30,6 +30,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+		<!-- Thymeleaf is a Template Templating Engine which allows to do many things
+		 					 with Html Files -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
 		<dependency>	<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>

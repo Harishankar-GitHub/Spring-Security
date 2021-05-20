@@ -70,8 +70,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .anyRequest()
                 .authenticated()
                 .and()
+
 //                .httpBasic();   // Commented this to enable Form Based Authentication in below line.
-                .formLogin();     // Enabled Form Based Authentication.
+
+                .formLogin()            // Enabled Form Based Authentication.
+                .loginPage("/login")    // Custom Login Page.
+                .permitAll();           // Permitting the Custom Login Page.
 
         // By default, Spring Security protects the application. Only GET APIs are accessible.
         // To access POST, PUT, DELETE etc, we disable CSRF.
