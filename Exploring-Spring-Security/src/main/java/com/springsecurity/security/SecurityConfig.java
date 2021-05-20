@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 //                It will look like XSRF-TOKEN - Token (Cookie Name - Token)
 //                Now with this Token, we can hit other APIs (POST, PUT etc.) by adding this Token in Header.
 //                HeaderName - X-XSRF-TOKEN, HeaderValue - Token
+//                The Token is valid for 30 Minutes.
 //                Crtl+Click on CookieCsrfTokenRepository to know more.
 //                Also, Find Files -> Search for CsrfFilter.class and explore.
 
@@ -69,7 +70,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic();
+//                .httpBasic();   // Commented this to enable Form Based Authentication in below line.
+                .formLogin();     // Enabled Form Based Authentication.
 
         // By default, Spring Security protects the application. Only GET APIs are accessible.
         // To access POST, PUT, DELETE etc, we disable CSRF.
