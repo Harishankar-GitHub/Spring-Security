@@ -1,19 +1,18 @@
 package com.springsecurity.security;
 
+import com.springsecurity.databaseAuthentication.ApplicationUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import static com.springsecurity.security.UserRoles.*;
+import static com.springsecurity.security.UserRoles.STUDENT;
 
 @Configuration
 @EnableWebSecurity
@@ -26,11 +25,14 @@ import static com.springsecurity.security.UserRoles.*;
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationUserService applicationUserService;
 
-    @Autowired  // When we Autowire, the PasswordEncoder Bean is injected into the Constructor.
-    public SecurityConfig(PasswordEncoder passwordEncoder)
+    @Autowired  // When we Autowire, the PasswordEncoder Bean and ApplicationUserService Bean is injected into the Constructor.
+    public SecurityConfig(PasswordEncoder passwordEncoder,
+                          ApplicationUserService applicationUserService)
     {
         this.passwordEncoder = passwordEncoder;
+        this.applicationUserService = applicationUserService;
     }
 
     // After extending WebSecurityConfigurerAdapter, Right Click -> Generate -> Select Override Methods
@@ -123,41 +125,60 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         // only for users with role ADMIN and ADMINTRAINEE.
     }
 
-    @Override
-    @Bean
-    protected UserDetailsService userDetailsService()
+//    @Override
+//    @Bean
+//    protected UserDetailsService userDetailsService()
+//    {
+//        UserDetails jack = User.builder()
+//                .username("Jack")
+//                .password(passwordEncoder.encode("password"))
+////                .roles(STUDENT.name())   // This internally will be ROLE_STUDENT
+//                // Commented the above line to specify the Roles along with the Authorities to the Users like below.
+//                .authorities(STUDENT.getGrantedAuthorities())
+//                .build();
+//
+//        // Defining Admin User
+//        UserDetails jill = User.builder()
+//                .username("Jill")
+//                .password(passwordEncoder.encode("password"))
+////                .roles(ADMIN.name())   // This internally will be ROLE_ADMIN
+//                // Commented the above line to specify the Roles along with the Authorities to the Users like below.
+//                .authorities(ADMIN.getGrantedAuthorities())
+//                .build();
+//
+//        UserDetails tom = User.builder()
+//                .username("Tom")
+//                .password(passwordEncoder.encode("password"))
+////                .roles(ADMINTRAINEE.name())   // This internally will be ROLE_ADMINTRAINEE
+//                // Commented the above line to specify the Roles along with the Authorities to the Users like below.
+//                .authorities(ADMINTRAINEE.getGrantedAuthorities())
+//                .build();
+//
+//        // This method is used to retrieve User Details from a Database.
+//        // For now, I have configured Users here.
+//
+//        // Do a Ctrl+Click on UserDetailsService and inside that check which classes
+//        // implements this Interface. There are around 5-6 options such as InMemoryUserDetailsManager etc.
+//        // I have used InMemoryUserDetailsManager.
+//        return new InMemoryUserDetailsManager(jack, jill, tom);
+//    }
+
+//    The above method uses InMemoryUserDetailsManager to store the UserDetails.
+//    Commented the above method so that I can use the below method which gets the
+//    UserDetails from a Database.
+
+    @Override   // This method is to set the AuthenticationProvider.
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception
     {
-        UserDetails jack = User.builder()
-                .username("Jack")
-                .password(passwordEncoder.encode("password"))
-//                .roles(STUDENT.name())   // This internally will be ROLE_STUDENT
-                // Commented the above line to specify the Roles along with the Authorities to the Users like below.
-                .authorities(STUDENT.getGrantedAuthorities())
-                .build();
+        auth.authenticationProvider(daoAuthenticationProvider());
+    }
 
-        // Defining Admin User
-        UserDetails jill = User.builder()
-                .username("Jill")
-                .password(passwordEncoder.encode("password"))
-//                .roles(ADMIN.name())   // This internally will be ROLE_ADMIN
-                // Commented the above line to specify the Roles along with the Authorities to the Users like below.
-                .authorities(ADMIN.getGrantedAuthorities())
-                .build();
-
-        UserDetails tom = User.builder()
-                .username("Tom")
-                .password(passwordEncoder.encode("password"))
-//                .roles(ADMINTRAINEE.name())   // This internally will be ROLE_ADMINTRAINEE
-                // Commented the above line to specify the Roles along with the Authorities to the Users like below.
-                .authorities(ADMINTRAINEE.getGrantedAuthorities())
-                .build();
-
-        // This method is used to retrieve User Details from a Database.
-        // For now, I have configured Users here.
-
-        // Do a Ctrl+Click on UserDetailsService and inside that check which classes
-        // implements this Interface. There are around 5-6 options such as InMemoryUserDetailsManager etc.
-        // I have used InMemoryUserDetailsManager.
-        return new InMemoryUserDetailsManager(jack, jill, tom);
+    @Bean       // Created DaoAuthenticationProvider and set the Password Encoder and Custom UserDetailsService.
+    public DaoAuthenticationProvider daoAuthenticationProvider()
+    {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(applicationUserService);
+        return provider;
     }
 }
