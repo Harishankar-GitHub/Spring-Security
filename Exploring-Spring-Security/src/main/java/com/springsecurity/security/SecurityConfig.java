@@ -75,7 +75,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 
                 .formLogin()            // Enabled Form Based Authentication.
                 .loginPage("/login")    // Custom Login Page.
-                .permitAll();           // Permitting the Custom Login Page.
+                .permitAll()            // Permitting the Custom Login Page.
+                .defaultSuccessUrl("/courses", true); // Default page to be redirected (Instead of index.html) after login.
 
         // By default, Spring Security protects the application. Only GET APIs are accessible.
         // To access POST, PUT, DELETE etc, we disable CSRF.
