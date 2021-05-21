@@ -76,7 +76,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .formLogin()            // Enabled Form Based Authentication.
                 .loginPage("/login")    // Custom Login Page.
                 .permitAll()            // Permitting the Custom Login Page.
-                .defaultSuccessUrl("/courses", true); // Default page to be redirected (Instead of index.html) after login.
+                .defaultSuccessUrl("/courses", true) // Default page to be redirected (Instead of index.html) after login.
+                .and()
+                .rememberMe()  // To extend the expiration time of the Cookie SESSIONID.
+                                // Default expiration time is 30 Minutes.
+                                // When rememberMe() is used, it is extended to 2 weeks!
+                .tokenValiditySeconds(10)
+//                The above line is used to modify the expiration time of Cookies.
+                .key("SomeKey");    // This key is used to hash the details (Username, Expiration Time) from the cookies
+                                    // and create md5 hash value.
 
         // By default, Spring Security protects the application. Only GET APIs are accessible.
         // To access POST, PUT, DELETE etc, we disable CSRF.
