@@ -169,3 +169,50 @@
 		- [TutorialsPoint](https://www.tutorialspoint.com/spring_boot/spring_boot_thymeleaf.htm)
 		- [Javatpoint](https://www.javatpoint.com/spring-boot-thymeleaf-view)
 		
+- **Redirect After Success Login**
+	- When we hit at ***8080***, it by default redirects to ***index.html*** that is in the *src/main/resources/static* folder.
+	- Now, we ***change it*** to redirect to another page.
+	- Refer ***SecurityConfig.java*** for the ***code***.
+
+- **Remember Me**
+	- Usually the ***Cookie SESSIONID*** expires after ***30 Minutes***.
+	- Spring Security offers the ***ability to extend the expiration time*** by using the Remember Me option!
+	- Refer ***SecurityConfig.java*** for the ***code***.
+	- When `rememberMe()` is used, it is ***extended to 2 weeks!***
+	- Added a ***Checkbox*** in login.html for Remember Me.
+	- When logging in, *Inspect -> Network -> Click on Login page -> Form Data -> We can observe* `remember-me: on`
+	- A ***cookie*** is sent back after logging in.
+	- The ***Cookies*** are ***similar*** to the ***Cookie SessionID***.
+	- In ***real world***, the Cookies are ***persisted to a real Database***.
+	- But now, ***Spring Security*** uses an ***In-Memory Database*** to store the ***Cookies***.
+	- We can find that in the *Login Page -> Inspect -> Network -> Click on Login page -> **Cookies***
+	- The Cookie has the following:
+		+ *Username*
+		+ *Expiration Time*
+		+ *md5 hash of the above 2 values.*
+	- ***Customizing*** Cookie Expiration Time - Refer ***SecurityConfig.java*** for the ***code***.
+
+- **Logout**
+	- *Set Request Method for Logout URL* [*(Best Practice)*](https://docs.spring.io/spring-security/site/docs/4.2.20.RELEASE/apidocs/org/springframework/security/config/annotation/web/configurers/LogoutConfigurer.html#logoutUrl-java.lang.String-)
+	- *Set Logout URL*
+	- *Clear Authentication*
+	- *Invalidate Http Session*
+	- *Delete Cookies*
+	- *Set the path to be redirected after Logout*
+
+- **Logout Button**
+	- In courses.html, added a Logout Button which redirects to /logout.
+	- The code for Logout Button is taken from the login.html file and modified a bit.
+
+- **Password, Username & Remember-Me Parameters**
+	- Refer ***SecurityConfig.java*** for the ***code***.
+
+- **DB Authentication**
+	- Created a ***new Package*** called ***databaseAuthentication***.
+	- Created a Class called *ApplicationUser* which ***implements*** *UserDetails Interface*.
+	- ***Added*** unimplemented methods.
+	- Then ***customized*** the class.
+	- Created *ApplicationUserDAO, ApplicationUserService & FakeApplicationUserDAOService*.
+	- Added `daoAuthenticationProvider()` & `configure(AuthenticationManagerBuilder auth)` in ***SecurityConfig.java***.
+	- Commented the `userDetailsService()` method so that the ***Users*** are ***fetched*** from the ***Database Authentication*** implementation.
+
