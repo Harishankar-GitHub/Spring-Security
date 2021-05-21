@@ -78,6 +78,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                     .loginPage("/login")    // Custom Login Page.
                         .permitAll()            // Permitting the Custom Login Page.
                     .defaultSuccessUrl("/courses", true) // Default page to be redirected (Instead of index.html) after login.
+                    .usernameParameter("username")  // The Parameter name here and in login.html must be same.
+                    .passwordParameter("password")  // The Parameter name here and in login.html must be same.
                 .and()
                 .rememberMe()  // To extend the expiration time of the Cookie SESSIONID.
                                 // Default expiration time is 30 Minutes.
@@ -86,6 +88,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 //                The above line is used to modify the expiration time of Cookies.
                     .key("SomeKey")     // This key is used to hash the details (Username, Expiration Time) from the cookies
                                     // and create md5 hash value.
+                    .rememberMeParameter("remember-me") // The Parameter name here and in login.html must be same.
                 .and()
                 .logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
