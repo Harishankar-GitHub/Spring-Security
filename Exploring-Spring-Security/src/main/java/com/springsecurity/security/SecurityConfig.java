@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*")
-                .permitAll()
+                    .permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())  // "/api/**" works. "/api/*" doesn't work.
 //                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
 //                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
@@ -74,17 +74,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 
 //                .httpBasic();   // Commented this to enable Form Based Authentication in below line.
 
-                .formLogin()            // Enabled Form Based Authentication.
-                .loginPage("/login")    // Custom Login Page.
-                .permitAll()            // Permitting the Custom Login Page.
-                .defaultSuccessUrl("/courses", true) // Default page to be redirected (Instead of index.html) after login.
+                .formLogin()                // Enabled Form Based Authentication.
+                    .loginPage("/login")    // Custom Login Page.
+                        .permitAll()            // Permitting the Custom Login Page.
+                    .defaultSuccessUrl("/courses", true) // Default page to be redirected (Instead of index.html) after login.
                 .and()
                 .rememberMe()  // To extend the expiration time of the Cookie SESSIONID.
                                 // Default expiration time is 30 Minutes.
                                 // When rememberMe() is used, it is extended to 2 weeks!
-                .tokenValiditySeconds(10)   // For longer time, we can use (int) TimeUnit.DAYS.toSeconds(21) for 21 Days.
+                    .tokenValiditySeconds(10)   // For longer time, we can use (int) TimeUnit.DAYS.toSeconds(21) for 21 Days.
 //                The above line is used to modify the expiration time of Cookies.
-                .key("SomeKey")     // This key is used to hash the details (Username, Expiration Time) from the cookies
+                    .key("SomeKey")     // This key is used to hash the details (Username, Expiration Time) from the cookies
                                     // and create md5 hash value.
                 .and()
                 .logout()
