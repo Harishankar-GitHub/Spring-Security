@@ -1,6 +1,7 @@
 package com.springsecurity.security;
 
 import com.springsecurity.databaseAuthentication.ApplicationUserService;
+import com.springsecurity.jwt.JwtConfig;
 import com.springsecurity.jwt.JwtTokenVerifier;
 import com.springsecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import javax.crypto.SecretKey;
 import static com.springsecurity.security.UserRoles.STUDENT;
 
 @Configuration
@@ -28,13 +30,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationUserService applicationUserService;
+    private final JwtConfig jwtConfig;
+    private final SecretKey secretKey;
 
-    @Autowired  // When we Autowire, the PasswordEncoder Bean and ApplicationUserService Bean is injected into the Constructor.
+    // When we Autowire, the PasswordEncoder Bean, ApplicationUserService Bean, JwtConfig Bean & SecretKey
+    // is injected into the Constructor.
+    @Autowired
     public SecurityConfig(PasswordEncoder passwordEncoder,
-                          ApplicationUserService applicationUserService)
+                          ApplicationUserService applicationUserService,
+                          JwtConfig jwtConfig,
+                          SecretKey secretKey)
     {
         this.passwordEncoder = passwordEncoder;
         this.applicationUserService = applicationUserService;
+        this.jwtConfig = jwtConfig;
+        this.secretKey = secretKey;
     }
 
     // After extending WebSecurityConfigurerAdapter, Right Click -> Generate -> Select Override Methods
@@ -202,11 +212,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 //                Now the Session won't be stored in a Database.
 
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
 //                Added a Filter.
 //                We have used authenticationManager() method from WebSecurityConfigurerAdapter Class as we have extended it.
 
-                .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
+                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
 //                Added another Filter.
 //                This Filter will be executed after the JwtUsernameAndPasswordAuthenticationFilter.
 
@@ -217,6 +227,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .anyRequest()
                 .authenticated();
     }
-    
 //    ************************************************************************************************************
 }

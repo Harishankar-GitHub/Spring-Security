@@ -2,13 +2,13 @@ package com.springsecurity.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +25,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     // But we can extend the UsernamePasswordAuthenticationFilter class and have our own implementation.
 
     private final AuthenticationManager authenticationManager;
+    private final JwtConfig jwtConfig;
+    private final SecretKey secretKey;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
@@ -73,8 +75,6 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     {
         // In this method, we are creating a Jwt Token and sending it to the Client (In Response).
 
-        String key = "SecureSecureSecureSecureSecureSecure";
-
         String jwtToken = Jwts.builder()
                 .setSubject(authResult.getName())
                 // Setting the Subject from authResult. This will be the Username (Jack/Jill/Tom etc.).
@@ -85,16 +85,16 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .setIssuedAt(new Date())
                 // The time when the Token is issued.
 
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationAfterDays())))
                 // Setting the expiration time of the Token. Set to 2 weeks. Sql Date has to be selected here.
 
-                .signWith(Keys.hmacShaKeyFor(key.getBytes()))
+                .signWith(secretKey)
                 // Signing the Token. The Key must be long to be more secure. So, appended Secure multiple times.
 
                 .compact();
                 // Compacting it into its final String form. A signed JWT is called a 'JWS'.
 
-        response.addHeader("Authorization", "Bearer " + jwtToken);
+        response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + jwtToken);
         // Added the Jwt Token to the Response Header.
         // We can find the Token in the Postman's Response Section after hitting http://localhost:8080/login with Username and Password in the Request Body.
         // The details in the Token can be checked in the JWT Debugger Tool at https://jwt.io/
