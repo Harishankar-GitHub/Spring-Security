@@ -216,3 +216,61 @@
 	- Added `daoAuthenticationProvider()` & `configure(AuthenticationManagerBuilder auth)` in ***SecurityConfig.java***.
 	- Commented the `userDetailsService()` method so that the ***Users*** are ***fetched*** from the ***Database Authentication*** implementation.
 
+- **JSON WEB TOKEN - JWT**
+	- ***Pros***
+		- *Fast*
+		- *Stateless*
+			- It ***doesn't need to have a database!***
+			- It ***doesn't need to store the session*** of the current user!
+			- ***Everything is embedded*** inside the token!
+		- *Used across many services*
+	- ***Cons***
+		- *Compromised secret key*
+			- If the secret key is compromised, it leads to a trouble.
+		- *No visibility to logged in users*
+			- Unlike Form Based Authentication etc., we don't know when the user logs in, logs out, no history etc.
+		- *Token can be stolen*
+			- If the token is stolen, a hacker can pretend to be a real user in the system.
+	- Some useful links
+		- [*https://jwt.io/*](https://jwt.io/)
+		- [*JWT Debugger Tool*](https://jwt.io/#debugger-io)
+		- [*Java Jwt GitHub*](https://github.com/jwtk/jjwt)
+		- [*https://flaviocopes.com/jwt/*](https://flaviocopes.com/jwt/)
+		- [*https://medium.com/*](https://medium.com/@sureshdsk/how-json-web-token-jwt-authentication-works-585c4f076033)
+	
+	- **How it works ?**
+		- ***Client*** sends ***credentials*** (Username and Password) to the ***Server***.
+		- ***Server validates*** the credentials and ***Creates and Signs the Token***.
+		- ***Server*** sends the ***Token*** to the ***Client***.
+		- From ***next time***, the ***Client*** sends only the ***Token*** in ***each requests***.
+		- ***Server validates*** the Token.
+
+	- **What a JWT Token has ?**
+		- JWT Token has ***3 parts***
+			- *Header*
+			- *Payload*
+			- *Verify Signature*
+
+	- **Jwt Dependencies**
+		- *The dependencies are taken from* [***Java Jwt Github***](https://github.com/jwtk/jjwt)
+
+	- **Code changes**
+			- Created a package called ***jwt***.
+			- Refer ***jwt*** package for the code.
+			- ***Commented*** the existing configure(HttpSecurity http) method in SecurityConfig.java and ***implemented JWT Authentication in a new method*** to avoid confusion.
+			- To use JWT Authentication, this method can be used.
+			- To use other Spring Security Features like Basic Authentication, Form Based Authentication etc., another configure(HttpSecurity http) method can be uncommented and used.
+
+	- ***Request Filters***
+			- ***Request*** **->** *Filter1* **->** *Filter2* **->** *Filter3* **->** *FilterN* **->** ***API***
+			- ***Request Filters*** are some ***classes*** that perform ***some validations*** before reaching the ***final destination (API)***.
+			- In our application, ***JwtUsernameAndPasswordAuthenticationFilter.java*** is one of the filters.
+			- We can have ***as many filters as we want***.
+			- The ***Order*** of these Filters is ***NOT guaranteed***.
+			- When the ***1st Filter is executed***, it has to pass on the ***Request and Response*** to the ***next Filter***.
+
+	> NOTE: 
+	> - Make sure the ***Expiration Time*** of the Token as not too long. Keep it like ***10 Days or 7 Days or even less***.
+	>- This can ***let a User authenticate*** to your system ***as much as possible***. 
+	>- A ***User*** can ***request*** for ***as many Tokens*** as he wants. Currently (With context to this application) the ***best way to fix*** this is to ***store the Tokens and User Information*** in a ***Real Database***.
+	>- So when the ***User requests for another Token, we can invalidate the pre-existing ones***.
