@@ -1,5 +1,14 @@
 # Spring Security
 
+#### Some Important Links / References
+>- [Spring Security Reference](https://docs.spring.io/spring-security/site/docs/5.0.x/reference/html/)
+>- [Spring Security Reference](https://docs.spring.io/spring-security/site/docs/current/reference/html5/)
+>- [Spring Security Starter Guide](https://spring.io/guides/topicals/spring-security-architecture)
+>- [Baeldung - Security with Spring](https://www.baeldung.com/security-spring)
+>- [Javatpoint - Spring Security Tutorial](https://www.javatpoint.com/spring-security-tutorial)
+>- [How to Do it in Java - Spring Security Tutorial](https://howtodoinjava.com/spring-security-tutorial/)
+>- [Blog - Guide to building Spring Boot library](https://piotrminkowski.com/2020/08/04/guide-to-building-spring-boot-library/)
+
 - Bootstrapped the application using [**start.spring.io**](https://start.spring.io/) 
 - Created an **API**
 - Added **Spring Security Dependency**
@@ -92,6 +101,8 @@
 	> ***When to use CSRF Protection ?***
 	-	It is ***recommended*** to use CSRF protection for any request that could be ***processed by a browser*** by normal users. If you are only creating a ***service*** that is used by ***non-browser clients***, you will likely want to ***disable CSRF*** protection.
 	-	Hence ***CSRF is disabled*** in the code as it is a ***Service***.
+	> [CSRF - Cross Site Request Forgery - Spring Docs](https://docs.spring.io/spring-security/site/docs/5.0.x/reference/html/csrf.html)
+	> [Baeldung - A Guide to CSRF Protection in Spring Security](https://www.baeldung.com/spring-security-csrf)
 
 - **CSRF Token**
 	- To ***generate*** the CSRF Token, we comment / delete the `csrf().disable()` so that the ***CSRF is enabled*** now.
