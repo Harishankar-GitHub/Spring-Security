@@ -1,6 +1,8 @@
 package com.springsecurity.security;
 
 import com.springsecurity.databaseAuthentication.ApplicationUserService;
+import com.springsecurity.jwt.JwtTokenVerifier;
+import com.springsecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +12,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import static com.springsecurity.security.UserRoles.STUDENT;
 
 @Configuration
@@ -37,93 +39,93 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 
     // After extending WebSecurityConfigurerAdapter, Right Click -> Generate -> Select Override Methods
     // to see the methods that are available to override.
-    @Override
-    protected void configure(HttpSecurity http) throws Exception
-    {
-        http
-                .csrf().disable()
-//                The above line can be commented so that CSRF is enabled and we can generate CSRF Token in below line.
-
-//                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception
+//    {
+//        http
+//                .csrf().disable()
+////                The above line can be commented so that CSRF is enabled and we can generate CSRF Token in below line.
+//
+////                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+////                .and()
+////                The above line is to generate the CSRF Token.
+////                Spring Security by default should generate token without the above line. But it didn't.
+////                By adding the above line, the CSRF Token is generated and some configuration related to CSRF can also be done.
+////                When hitting the GET API from Postman after enabling Postman Interceptor (Refer README.md),
+////                we can get the CSRF Token in the Cookies section of the Response.
+////                It will look like XSRF-TOKEN - Token (Cookie Name - Token)
+////                Now with this Token, we can hit other APIs (POST, PUT etc.) by adding this Token in Header.
+////                HeaderName - X-XSRF-TOKEN, HeaderValue - Token
+////                The Token is valid for 30 Minutes.
+////                Crtl+Click on CookieCsrfTokenRepository to know more.
+////                Also, Find Files -> Search for CsrfFilter.class and explore.
+//
+//                .authorizeRequests()
+//                .antMatchers("/", "index", "/css/*", "/js/*")
+//                    .permitAll()
+//                .antMatchers("/api/**").hasRole(STUDENT.name())  // "/api/**" works. "/api/*" doesn't work.
+////                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+////                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+////                .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+////                .antMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
+////                The above 4 antMatchers are Permission Based Authentication using antMatchers.
+////                Commented the above antMatchers as we have used Permission Based Authentication
+////                using @PreAuthorize Annotation in StudentManagementController.
+//
+//                .anyRequest()
+//                .authenticated()
 //                .and()
-//                The above line is to generate the CSRF Token.
-//                Spring Security by default should generate token without the above line. But it didn't.
-//                By adding the above line, the CSRF Token is generated and some configuration related to CSRF can also be done.
-//                When hitting the GET API from Postman after enabling Postman Interceptor (Refer README.md),
-//                we can get the CSRF Token in the Cookies section of the Response.
-//                It will look like XSRF-TOKEN - Token (Cookie Name - Token)
-//                Now with this Token, we can hit other APIs (POST, PUT etc.) by adding this Token in Header.
-//                HeaderName - X-XSRF-TOKEN, HeaderValue - Token
-//                The Token is valid for 30 Minutes.
-//                Crtl+Click on CookieCsrfTokenRepository to know more.
-//                Also, Find Files -> Search for CsrfFilter.class and explore.
-
-                .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/js/*")
-                    .permitAll()
-                .antMatchers("/api/**").hasRole(STUDENT.name())  // "/api/**" works. "/api/*" doesn't work.
-//                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
-//                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
-//                .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
-//                .antMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
-//                The above 4 antMatchers are Permission Based Authentication using antMatchers.
-//                Commented the above antMatchers as we have used Permission Based Authentication
-//                using @PreAuthorize Annotation in StudentManagementController.
-
-                .anyRequest()
-                .authenticated()
-                .and()
-
-//                .httpBasic();   // Commented this to enable Form Based Authentication in below line.
-
-                .formLogin()                // Enabled Form Based Authentication.
-                    .loginPage("/login")    // Custom Login Page.
-                        .permitAll()            // Permitting the Custom Login Page.
-                    .defaultSuccessUrl("/courses", true) // Default page to be redirected (Instead of index.html) after login.
-                    .usernameParameter("username")  // The Parameter name here and in login.html must be same.
-                    .passwordParameter("password")  // The Parameter name here and in login.html must be same.
-                .and()
-                .rememberMe()  // To extend the expiration time of the Cookie SESSIONID.
-                                // Default expiration time is 30 Minutes.
-                                // When rememberMe() is used, it is extended to 2 weeks!
-                    .tokenValiditySeconds(10)   // For longer time, we can use (int) TimeUnit.DAYS.toSeconds(21) for 21 Days.
-//                The above line is used to modify the expiration time of Cookies.
-                    .key("SomeKey")     // This key is used to hash the details (Username, Expiration Time) from the cookies
-                                    // and create md5 hash value.
-                    .rememberMeParameter("remember-me") // The Parameter name here and in login.html must be same.
-                .and()
-                .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-                    // When CSRF is enabled, Logout Request Method must be a POST.
-                    // When CSRF is disabled, Logout any Request Method can be used. But the best practice is to use GET.
-                    .logoutUrl("/logout")           // Setting the Path for Logout Page. If not set, default is /logout from Spring Security.
-                    .clearAuthentication(true)      // Clearing Authentication.
-                    .invalidateHttpSession(true)    // Invalidating Http Session.
-                    .deleteCookies("JSESSIONID", "remember-me")     // Deleting cookies.
-                    .logoutSuccessUrl("/login");                    // Setting the path to be redirected after logout. If not set, default is /login from Spring Security.
-
-
-
-        // By default, Spring Security protects the application. Only GET APIs are accessible.
-        // To access POST, PUT, DELETE etc, we disable CSRF.
-
-        // We are saying, we want to authorize requests,
-        // any request,
-        // must be authenticated (i.e., the client must specify the username and password)
-        // and
-        // the mechanism that we want to enforce the authenticity of the client is by using Http Basic Authentication.
-
-        // Permit all the requests from the URLs that are specified in antMatchers.
-        // i.e., Basic Authentication is not required.
-
-        // Permit URLs with /api/** only for the users which has STUDENT Role.
-
-        // Permit URLs with management/api/** and methods (DELETE, POST, PUT)
-        // only for users with permissions COURSE_WRITE.
-
-        // Permit URLs with management/api/** and methods (GET)
-        // only for users with role ADMIN and ADMINTRAINEE.
-    }
+//
+////                .httpBasic();   // Commented this to enable Form Based Authentication in below line.
+//
+//                .formLogin()                // Enabled Form Based Authentication.
+//                    .loginPage("/login")    // Custom Login Page.
+//                        .permitAll()            // Permitting the Custom Login Page.
+//                    .defaultSuccessUrl("/courses", true) // Default page to be redirected (Instead of index.html) after login.
+//                    .usernameParameter("username")  // The Parameter name here and in login.html must be same.
+//                    .passwordParameter("password")  // The Parameter name here and in login.html must be same.
+//                .and()
+//                .rememberMe()  // To extend the expiration time of the Cookie SESSIONID.
+//                                // Default expiration time is 30 Minutes.
+//                                // When rememberMe() is used, it is extended to 2 weeks!
+//                    .tokenValiditySeconds(10)   // For longer time, we can use (int) TimeUnit.DAYS.toSeconds(21) for 21 Days.
+////                The above line is used to modify the expiration time of Cookies.
+//                    .key("SomeKey")     // This key is used to hash the details (Username, Expiration Time) from the cookies
+//                                    // and create md5 hash value.
+//                    .rememberMeParameter("remember-me") // The Parameter name here and in login.html must be same.
+//                .and()
+//                .logout()
+//                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+//                    // When CSRF is enabled, Logout Request Method must be a POST.
+//                    // When CSRF is disabled, Logout any Request Method can be used. But the best practice is to use GET.
+//                    .logoutUrl("/logout")           // Setting the Path for Logout Page. If not set, default is /logout from Spring Security.
+//                    .clearAuthentication(true)      // Clearing Authentication.
+//                    .invalidateHttpSession(true)    // Invalidating Http Session.
+//                    .deleteCookies("JSESSIONID", "remember-me")     // Deleting cookies.
+//                    .logoutSuccessUrl("/login");                    // Setting the path to be redirected after logout. If not set, default is /login from Spring Security.
+//
+//
+//
+//        // By default, Spring Security protects the application. Only GET APIs are accessible.
+//        // To access POST, PUT, DELETE etc, we disable CSRF.
+//
+//        // We are saying, we want to authorize requests,
+//        // any request,
+//        // must be authenticated (i.e., the client must specify the username and password)
+//        // and
+//        // the mechanism that we want to enforce the authenticity of the client is by using Http Basic Authentication.
+//
+//        // Permit all the requests from the URLs that are specified in antMatchers.
+//        // i.e., Basic Authentication is not required.
+//
+//        // Permit URLs with /api/** only for the users which has STUDENT Role.
+//
+//        // Permit URLs with management/api/** and methods (DELETE, POST, PUT)
+//        // only for users with permissions COURSE_WRITE.
+//
+//        // Permit URLs with management/api/** and methods (GET)
+//        // only for users with role ADMIN and ADMINTRAINEE.
+//    }
 
 //    @Override
 //    @Bean
@@ -181,4 +183,40 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         provider.setUserDetailsService(applicationUserService);
         return provider;
     }
+
+//    ************************************************************************************************************
+
+//    Commented the above configure(HttpSecurity http) method as it has other concepts of Spring Security.
+//    If I add JWT Authentication implementation in the existing configure(HttpSecurity http) method, it
+//    will be confusing.
+//    Hence, creating a new method and implemented JWT Authentication below.
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception
+    {
+        http
+                .csrf().disable()
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                As JWT is Stateless, we define Session Creation Policy as STATELESS in the above line.
+//                Now the Session won't be stored in a Database.
+
+                .and()
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+//                Added a Filter.
+//                We have used authenticationManager() method from WebSecurityConfigurerAdapter Class as we have extended it.
+
+                .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
+//                Added another Filter.
+//                This Filter will be executed after the JwtUsernameAndPasswordAuthenticationFilter.
+
+                .authorizeRequests()
+                .antMatchers("/", "index", "/css/*", "/js/*")
+                    .permitAll()
+                .antMatchers("/api/**").hasRole(STUDENT.name())  // "/api/**" works. "/api/*" doesn't work.
+                .anyRequest()
+                .authenticated();
+    }
+    
+//    ************************************************************************************************************
 }
