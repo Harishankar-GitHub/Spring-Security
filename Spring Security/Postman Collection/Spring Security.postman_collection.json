@@ -299,25 +299,13 @@
 					"name": "ADD Student - With CSRF Token in Header",
 					"request": {
 						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "username",
-									"value": "Jill",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "password",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "X-XSRF-TOKEN",
-								"value": "861d5f12-da48-4361-8aa0-2e19387dd34b",
+								"value": "{{token_from_get_api_response_headers}}",
 								"type": "text"
 							}
 						],
